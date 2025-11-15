@@ -22,6 +22,12 @@ package-lock.json
 .env.local
 .env.*.local
 
+# Firebase (archivos locales)
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+
 # Archivos temporales
 *.tmp
 *.temp

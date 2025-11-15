@@ -108,7 +108,7 @@ const DashboardModule = {
   /**
    * Maneja el envío del formulario
    */
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
 
     // Limpiar errores previos
@@ -127,16 +127,16 @@ const DashboardModule = {
     try {
       if (this.currentEditId) {
         // Actualizar
-        CarStorage.update(this.currentEditId, formData);
+        await CarStorage.update(this.currentEditId, formData);
         this.showAlert('Vehículo actualizado exitosamente', 'success');
       } else {
         // Crear nuevo
-        CarStorage.save(formData);
+        await CarStorage.save(formData);
         this.showAlert('Vehículo agregado exitosamente', 'success');
       }
 
       this.hideForm();
-      this.loadCars();
+      await this.loadCars();
     } catch (error) {
       this.showAlert('Error al guardar el vehículo: ' + error.message, 'error');
     }
@@ -244,25 +244,30 @@ const DashboardModule = {
   /**
    * Carga y renderiza todos los autos
    */
-  loadCars() {
+  async loadCars() {
     const carsList = document.getElementById('carsList');
     const carsEmpty = document.getElementById('carsEmpty');
 
     if (!carsList || !carsEmpty) return;
 
-    const cars = CarStorage.getAll();
+    try {
+      const cars = await CarStorage.getAll();
 
-    if (cars.length === 0) {
-      carsList.innerHTML = '';
-      carsEmpty.classList.remove('hidden');
-      return;
+      if (cars.length === 0) {
+        carsList.innerHTML = '';
+        carsEmpty.classList.remove('hidden');
+        return;
+      }
+
+      carsEmpty.classList.add('hidden');
+      carsList.innerHTML = cars.map(car => this.createCarListItem(car)).join('');
+
+      // Agregar event listeners a los botones
+      this.attachCarActions();
+    } catch (error) {
+      console.error('Error al cargar autos:', error);
+      this.showAlert('Error al cargar vehículos', 'error');
     }
-
-    carsEmpty.classList.add('hidden');
-    carsList.innerHTML = cars.map(car => this.createCarListItem(car)).join('');
-
-    // Agregar event listeners a los botones
-    this.attachCarActions();
   },
 
   /**
@@ -322,28 +327,33 @@ const DashboardModule = {
   /**
    * Edita un auto
    */
-  editCar(id) {
-    const car = CarStorage.getById(id);
-    if (!car) {
-      this.showAlert('Vehículo no encontrado', 'error');
-      return;
+  async editCar(id) {
+    try {
+      const car = await CarStorage.getById(id);
+      if (!car) {
+        this.showAlert('Vehículo no encontrado', 'error');
+        return;
+      }
+
+      this.currentEditId = id;
+
+      // Llenar el formulario
+      document.getElementById('brand').value = car.brand;
+      document.getElementById('model').value = car.model;
+      document.getElementById('year').value = car.year;
+      document.getElementById('price').value = car.price;
+      document.getElementById('mileage').value = car.mileage;
+      document.getElementById('transmission').value = car.transmission;
+      document.getElementById('fuelType').value = car.fuelType;
+      document.getElementById('color').value = car.color || '';
+      document.getElementById('imageUrl').value = car.imageUrl || '';
+      document.getElementById('description').value = car.description || '';
+
+      this.showForm();
+    } catch (error) {
+      console.error('Error al cargar vehículo:', error);
+      this.showAlert('Error al cargar el vehículo', 'error');
     }
-
-    this.currentEditId = id;
-
-    // Llenar el formulario
-    document.getElementById('brand').value = car.brand;
-    document.getElementById('model').value = car.model;
-    document.getElementById('year').value = car.year;
-    document.getElementById('price').value = car.price;
-    document.getElementById('mileage').value = car.mileage;
-    document.getElementById('transmission').value = car.transmission;
-    document.getElementById('fuelType').value = car.fuelType;
-    document.getElementById('color').value = car.color || '';
-    document.getElementById('imageUrl').value = car.imageUrl || '';
-    document.getElementById('description').value = car.description || '';
-
-    this.showForm();
   },
 
   /**
@@ -375,14 +385,14 @@ const DashboardModule = {
   /**
    * Confirma y ejecuta la eliminación
    */
-  confirmDelete() {
+  async confirmDelete() {
     if (!this.deleteCarId) return;
 
     try {
-      const deleted = CarStorage.delete(this.deleteCarId);
+      const deleted = await CarStorage.delete(this.deleteCarId);
       if (deleted) {
         this.showAlert('Vehículo eliminado exitosamente', 'success');
-        this.loadCars();
+        await this.loadCars();
       } else {
         this.showAlert('Vehículo no encontrado', 'error');
       }

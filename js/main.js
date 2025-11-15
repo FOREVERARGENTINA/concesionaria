@@ -6,17 +6,21 @@ const App = {
   /**
    * Inicializa la aplicación
    */
-  init() {
-    // Inicializar datos de demostración
-    CarStorage.initDemoData();
+  async init() {
+    try {
+      // Inicializar datos de demostración
+      await CarStorage.initDemoData();
 
-    // Configurar navegación móvil
-    this.setupMobileNav();
+      // Configurar navegación móvil
+      this.setupMobileNav();
 
-    // Configurar smooth scroll
-    this.setupSmoothScroll();
+      // Configurar smooth scroll
+      this.setupSmoothScroll();
 
-    console.log('AutoPremium inicializado correctamente');
+      console.log('AutoPremium inicializado correctamente');
+    } catch (error) {
+      console.error('Error al inicializar la aplicación:', error);
+    }
   },
 
   /**

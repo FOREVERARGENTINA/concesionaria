@@ -32,23 +32,23 @@ const CatalogModule = {
     const filterPrice = document.getElementById('filterPrice');
 
     if (filterBrand) {
-      filterBrand.addEventListener('change', (e) => {
+      filterBrand.addEventListener('change', async (e) => {
         this.currentFilters.brand = e.target.value;
-        this.loadCars();
+        await this.loadCars();
       });
     }
 
     if (filterYear) {
-      filterYear.addEventListener('change', (e) => {
+      filterYear.addEventListener('change', async (e) => {
         this.currentFilters.year = e.target.value;
-        this.loadCars();
+        await this.loadCars();
       });
     }
 
     if (filterPrice) {
-      filterPrice.addEventListener('change', (e) => {
+      filterPrice.addEventListener('change', async (e) => {
         this.currentFilters.maxPrice = e.target.value;
-        this.loadCars();
+        await this.loadCars();
       });
     }
   },
@@ -56,83 +56,97 @@ const CatalogModule = {
   /**
    * Puebla los filtros con datos disponibles
    */
-  populateFilters() {
-    this.populateBrands();
-    this.populateYears();
+  async populateFilters() {
+    await this.populateBrands();
+    await this.populateYears();
   },
 
   /**
    * Puebla el filtro de marcas
    */
-  populateBrands() {
+  async populateBrands() {
     const filterBrand = document.getElementById('filterBrand');
     if (!filterBrand) return;
 
-    const brands = CarStorage.getBrands();
-    const currentValue = filterBrand.value;
+    try {
+      const brands = await CarStorage.getBrands();
+      const currentValue = filterBrand.value;
 
-    // Limpiar opciones existentes excepto la primera
-    filterBrand.innerHTML = '<option value="">Todas las marcas</option>';
+      // Limpiar opciones existentes excepto la primera
+      filterBrand.innerHTML = '<option value="">Todas las marcas</option>';
 
-    brands.forEach(brand => {
-      const option = document.createElement('option');
-      option.value = brand;
-      option.textContent = brand;
-      filterBrand.appendChild(option);
-    });
+      brands.forEach(brand => {
+        const option = document.createElement('option');
+        option.value = brand;
+        option.textContent = brand;
+        filterBrand.appendChild(option);
+      });
 
-    // Restaurar el valor seleccionado
-    filterBrand.value = currentValue;
+      // Restaurar el valor seleccionado
+      filterBrand.value = currentValue;
+    } catch (error) {
+      console.error('Error al cargar marcas:', error);
+    }
   },
 
   /**
    * Puebla el filtro de años
    */
-  populateYears() {
+  async populateYears() {
     const filterYear = document.getElementById('filterYear');
     if (!filterYear) return;
 
-    const years = CarStorage.getYears();
-    const currentValue = filterYear.value;
+    try {
+      const years = await CarStorage.getYears();
+      const currentValue = filterYear.value;
 
-    // Limpiar opciones existentes excepto la primera
-    filterYear.innerHTML = '<option value="">Todos los años</option>';
+      // Limpiar opciones existentes excepto la primera
+      filterYear.innerHTML = '<option value="">Todos los años</option>';
 
-    years.forEach(year => {
-      const option = document.createElement('option');
-      option.value = year;
-      option.textContent = year;
-      filterYear.appendChild(option);
-    });
+      years.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        filterYear.appendChild(option);
+      });
 
-    // Restaurar el valor seleccionado
-    filterYear.value = currentValue;
+      // Restaurar el valor seleccionado
+      filterYear.value = currentValue;
+    } catch (error) {
+      console.error('Error al cargar años:', error);
+    }
   },
 
   /**
    * Carga y renderiza los autos según filtros
    */
-  loadCars() {
+  async loadCars() {
     const catalogGrid = document.getElementById('catalogGrid');
     const catalogEmpty = document.getElementById('catalogEmpty');
 
     if (!catalogGrid || !catalogEmpty) return;
 
-    // Obtener autos filtrados
-    const cars = CarStorage.filter(this.currentFilters);
+    try {
+      // Obtener autos filtrados
+      const cars = await CarStorage.filter(this.currentFilters);
 
-    // Mostrar/ocultar estado vacío
-    if (cars.length === 0) {
+      // Mostrar/ocultar estado vacío
+      if (cars.length === 0) {
+        catalogGrid.classList.add('hidden');
+        catalogEmpty.classList.remove('hidden');
+        return;
+      }
+
+      catalogGrid.classList.remove('hidden');
+      catalogEmpty.classList.add('hidden');
+
+      // Renderizar autos
+      catalogGrid.innerHTML = cars.map(car => this.createCarCard(car)).join('');
+    } catch (error) {
+      console.error('Error al cargar autos:', error);
       catalogGrid.classList.add('hidden');
       catalogEmpty.classList.remove('hidden');
-      return;
     }
-
-    catalogGrid.classList.remove('hidden');
-    catalogEmpty.classList.add('hidden');
-
-    // Renderizar autos
-    catalogGrid.innerHTML = cars.map(car => this.createCarCard(car)).join('');
   },
 
   /**
