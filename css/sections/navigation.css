@@ -1,0 +1,111 @@
+/* ========================================
+   NAVIGATION
+   ======================================== */
+
+.header {
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-md);
+}
+
+.logo {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.logo:hover {
+  color: var(--color-primary-dark);
+}
+
+.nav-menu {
+  display: none;
+  gap: var(--space-lg);
+}
+
+.nav-menu.active {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--color-white);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.nav-link {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-sm) var(--space-md);
+  transition: color var(--transition-fast);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-primary);
+}
+
+.nav-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-sm);
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-toggle-line {
+  width: 24px;
+  height: 3px;
+  background-color: var(--color-gray-700);
+  transition: all var(--transition-fast);
+  border-radius: 2px;
+}
+
+.nav-toggle.active .nav-toggle-line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav-toggle.active .nav-toggle-line:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.active .nav-toggle-line:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+@media (min-width: 768px) {
+  .nav-menu {
+    display: flex;
+    flex-direction: row;
+    position: static;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .nav-menu.active {
+    box-shadow: none;
+  }
+
+  .nav-toggle {
+    display: none;
+  }
+}

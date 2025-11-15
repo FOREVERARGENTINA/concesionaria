@@ -1,0 +1,27 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencias (si se agregan en el futuro)
+node_modules/
+package-lock.json
+
+# Archivos de entorno (si se agregan en el futuro)
+.env
+.env.local
+.env.*.local
+
+# Archivos temporales
+*.tmp
+*.temp

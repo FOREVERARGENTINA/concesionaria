@@ -1,0 +1,159 @@
+/* ========================================
+   DASHBOARD SECTION
+   ======================================== */
+
+.dashboard-section {
+  padding: var(--space-2xl) 0;
+  min-height: calc(100vh - 200px);
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+@media (min-width: 768px) {
+  .dashboard-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.dashboard-title {
+  font-size: var(--font-size-3xl);
+}
+
+/* Formulario de auto */
+.car-form {
+  background-color: var(--color-white);
+  padding: var(--space-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-xl);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Lista de autos en dashboard */
+.dashboard-cars {
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.dashboard-cars-header {
+  padding: var(--space-lg);
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.dashboard-cars-header h3 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+}
+
+.dashboard-cars-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-car-item {
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: background-color var(--transition-fast);
+}
+
+.dashboard-car-item:hover {
+  background-color: var(--color-gray-50);
+}
+
+.dashboard-car-item:last-child {
+  border-bottom: none;
+}
+
+@media (min-width: 768px) {
+  .dashboard-car-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.dashboard-car-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+@media (min-width: 768px) {
+  .dashboard-car-info {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+}
+
+.dashboard-car-main {
+  flex: 1;
+}
+
+.dashboard-car-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-xs);
+}
+
+.dashboard-car-details {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.dashboard-car-price {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.dashboard-car-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.dashboard-empty {
+  padding: var(--space-4xl) var(--space-lg);
+  text-align: center;
+  color: var(--color-gray-500);
+}

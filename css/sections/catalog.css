@@ -1,0 +1,136 @@
+/* ========================================
+   CATALOG SECTION
+   ======================================== */
+
+.catalog-section {
+  padding: var(--space-3xl) 0;
+  background-color: var(--color-gray-50);
+}
+
+.catalog-header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.catalog-title {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-md);
+}
+
+.catalog-description {
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-600);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Filtros */
+.catalog-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  background-color: var(--color-white);
+  padding: var(--space-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .catalog-filters {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.filter-group {
+  flex: 1;
+}
+
+/* Car Card específico */
+.car-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.car-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.car-brand {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+  text-transform: uppercase;
+}
+
+.car-model {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-sm);
+}
+
+.car-year {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-md);
+}
+
+.car-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  flex: 1;
+}
+
+.car-feature {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.car-price {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+
+.car-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.car-actions .btn {
+  flex: 1;
+}
+
+/* Empty state */
+.catalog-empty {
+  text-align: center;
+  padding: var(--space-4xl) var(--space-lg);
+}
+
+.catalog-empty-icon {
+  font-size: var(--font-size-5xl);
+  color: var(--color-gray-400);
+  margin-bottom: var(--space-lg);
+}
+
+.catalog-empty-title {
+  font-size: var(--font-size-2xl);
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-md);
+}
+
+.catalog-empty-text {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-lg);
+}

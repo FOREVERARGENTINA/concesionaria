@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Disallow dashboard (área administrativa)
+Disallow: /dashboard.html
+
+# Sitemap
+Sitemap: https://autopremium.com/sitemap.xml
