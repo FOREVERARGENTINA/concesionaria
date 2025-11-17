@@ -14,12 +14,13 @@
  */
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_PROJECT_ID.firebaseapp.com",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_PROJECT_ID.appspot.com",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyCuQXi0LS6TJ1UN2-sprZWbYliX72grg-Y",
+  authDomain: "frandoweb-4c2c7.firebaseapp.com",
+  projectId: "frandoweb-4c2c7",
+  storageBucket: "frandoweb-4c2c7.firebasestorage.app",
+  messagingSenderId: "227831202965",
+  appId: "1:227831202965:web:21256f915db24a08f7c79c",
+  measurementId: "G-5B39X54TYY"
 };
 
 /**
