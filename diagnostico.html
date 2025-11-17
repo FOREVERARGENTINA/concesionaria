@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Firebase</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .container {
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #3e3e42;
+        }
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4fc3f7;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #81c784;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .log-item {
+            background: #1e1e1e;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border-left: 3px solid #007acc;
+        }
+        .log-item.success {
+            border-left-color: #4caf50;
+        }
+        .log-item.error {
+            border-left-color: #f44336;
+        }
+        .log-item.warning {
+            border-left-color: #ff9800;
+        }
+        button {
+            background-color: #007acc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            font-family: inherit;
+        }
+        button:hover {
+            background-color: #005a9e;
+        }
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        .buttons {
+            margin: 20px 0;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #3e3e42;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.ok {
+            background-color: #4caf50;
+            color: white;
+        }
+        .status.fail {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico de Firebase</h1>
+
+        <div class="buttons">
+            <button onclick="runFullDiagnostic()">🔬 Ejecutar Diagnóstico Completo</button>
+            <button onclick="testFirestoreWrite()">✍️ Probar Escritura en Firestore</button>
+            <button onclick="testFirestoreRead()">📖 Probar Lectura de Firestore</button>
+            <button onclick="clearLogs()">🗑️ Limpiar</button>
+        </div>
+
+        <div id="logs"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuQXi0LS6TJ1UN2-sprZWbYliX72grg-Y",
+            authDomain: "frandoweb-4c2c7.firebaseapp.com",
+            projectId: "frandoweb-4c2c7",
+            storageBucket: "frandoweb-4c2c7.firebasestorage.app",
+            messagingSenderId: "227831202965",
+            appId: "1:227831202965:web:21256f915db24a08f7c79c",
+            measurementId: "G-5B39X54TYY"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        function log(message, type = 'info', data = null) {
+            const logsDiv = document.getElementById('logs');
+            const logItem = document.createElement('div');
+            logItem.className = `log-item ${type}`;
+
+            let content = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+
+            if (data) {
+                content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+
+            logItem.innerHTML = content;
+            logsDiv.appendChild(logItem);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+
+        async function runFullDiagnostic() {
+            clearLogs();
+            log('🚀 Iniciando diagnóstico completo...', 'info');
+
+            // 1. Verificar Firebase Config
+            log('1️⃣ Verificando configuración de Firebase...', 'info');
+            log('Configuración cargada', 'success', {
+                projectId: firebaseConfig.projectId,
+                authDomain: firebaseConfig.authDomain
+            });
+
+            // 2. Verificar Auth
+            log('2️⃣ Verificando autenticación...', 'info');
+            const user = auth.currentUser;
+
+            if (user) {
+                log('Usuario autenticado ✅', 'success');
+                log('Información del usuario', 'info', {
+                    uid: user.uid,
+                    email: user.email,
+                    emailVerified: user.emailVerified,
+                    displayName: user.displayName
+                });
+
+                // Obtener token
+                try {
+                    const token = await user.getIdToken();
+                    log('Token de autenticación obtenido ✅', 'success');
+                    log('Token (primeros 50 caracteres)', 'info', {
+                        token: token.substring(0, 50) + '...'
+                    });
+
+                    // Obtener claims
+                    const tokenResult = await user.getIdTokenResult();
+                    log('Claims del token', 'info', tokenResult.claims);
+
+                } catch (error) {
+                    log('Error al obtener token ❌', 'error', {
+                        error: error.message,
+                        code: error.code
+                    });
+                }
+            } else {
+                log('No hay usuario autenticado ❌', 'error');
+                log('⚠️ Debes iniciar sesión primero en index.html', 'warning');
+                return;
+            }
+
+            // 3. Verificar Firestore
+            log('3️⃣ Verificando conexión a Firestore...', 'info');
+            try {
+                // Intentar obtener la configuración de Firestore
+                const settings = db._settings;
+                log('Firestore configurado ✅', 'success', {
+                    host: settings.host,
+                    ssl: settings.ssl
+                });
+            } catch (error) {
+                log('Error en configuración de Firestore ❌', 'error', error);
+            }
+
+            // 4. Test de lectura
+            log('4️⃣ Probando LECTURA en Firestore...', 'info');
+            await testFirestoreRead();
+
+            // 5. Test de escritura
+            log('5️⃣ Probando ESCRITURA en Firestore...', 'info');
+            await testFirestoreWrite();
+        }
+
+        async function testFirestoreRead() {
+            try {
+                log('Intentando leer colección "cars"...', 'info');
+                const snapshot = await db.collection('cars').limit(1).get();
+
+                log(`Lectura exitosa ✅ (${snapshot.size} documentos)`, 'success');
+
+                if (!snapshot.empty) {
+                    snapshot.forEach(doc => {
+                        log('Documento encontrado', 'success', {
+                            id: doc.id,
+                            data: doc.data()
+                        });
+                    });
+                } else {
+                    log('La colección está vacía (esto es normal si no hay autos)', 'warning');
+                }
+            } catch (error) {
+                log('Error en lectura ❌', 'error', {
+                    message: error.message,
+                    code: error.code,
+                    stack: error.stack
+                });
+            }
+        }
+
+        async function testFirestoreWrite() {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    log('No hay usuario autenticado. Inicia sesión primero.', 'error');
+                    return;
+                }
+
+                log('Intentando escribir en colección "cars"...', 'info');
+
+                const testData = {
+                    brand: "Toyota",
+                    model: "Corolla Test",
+                    year: 2023,
+                    price: 25000,
+                    transmission: "Automática",
+                    fuel: "Gasolina",
+                    mileage: 15000,
+                    image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    testDocument: true
+                };
+
+                log('Datos a escribir', 'info', testData);
+
+                const docRef = await db.collection('cars').add(testData);
+
+                log(`Escritura exitosa ✅ ID: ${docRef.id}`, 'success');
+                log('Documento creado con ID', 'success', { id: docRef.id });
+
+                // Intentar leer el documento recién creado
+                log('Verificando el documento creado...', 'info');
+                const doc = await docRef.get();
+                if (doc.exists) {
+                    log('Verificación exitosa ✅', 'success', doc.data());
+                }
+
+            } catch (error) {
+                log('Error en escritura ❌', 'error', {
+                    message: error.message,
+                    code: error.code,
+                    fullError: error
+                });
+
+                // Información adicional de debug
+                if (error.code === 'permission-denied') {
+                    log('⚠️ DIAGNÓSTICO DEL ERROR:', 'warning');
+                    log('Este error indica que las reglas de Firestore están bloqueando la operación.', 'warning');
+                    log('Pasos a verificar:', 'warning', {
+                        '1': 'Ve a Firebase Console → Firestore Database → Rules',
+                        '2': 'Verifica que las reglas permitan escritura',
+                        '3': 'Asegúrate de haber publicado las reglas',
+                        '4': 'Espera 1-2 minutos para que se propaguen',
+                        '5': 'Verifica que el proyecto correcto esté seleccionado'
+                    });
+                }
+            }
+        }
+
+        // Monitorear estado de autenticación
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                log(`🔐 Usuario detectado: ${user.email}`, 'success');
+            } else {
+                log('⚠️ No hay sesión activa. Inicia sesión en index.html primero.', 'warning');
+            }
+        });
+
+        // Log inicial
+        window.addEventListener('load', () => {
+            log('🎯 Sistema de diagnóstico listo', 'info');
+            log('Haz clic en "Ejecutar Diagnóstico Completo" para comenzar', 'info');
+        });
+    </script>
+</body>
+</html>

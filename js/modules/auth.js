@@ -34,9 +34,17 @@ const AuthModule = {
   async onUserLoggedIn(user) {
     console.log('Usuario autenticado:', user.email);
 
-    // Obtener claims personalizados (roles)
-    const tokenResult = await user.getIdTokenResult();
-    const isAdmin = tokenResult.claims.admin || false;
+    // Verificar si es admin desde Firestore
+    let isAdmin = false;
+    try {
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        isAdmin = userData.role === 'admin';
+      }
+    } catch (error) {
+      console.error('Error al obtener rol de usuario:', error);
+    }
 
     // Guardar info del usuario
     this.currentUser = {
@@ -67,9 +75,11 @@ const AuthModule = {
     this.currentUser = null;
     this.updateUI(false);
 
-    // Si estamos en dashboard, redirigir a login
+    // Si estamos en dashboard, redirigir a index.html
     if (window.location.pathname.includes('dashboard.html')) {
-      this.showLoginModal();
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1000);
     }
   },
 
@@ -207,8 +217,15 @@ const AuthModule = {
       const user = firebase.auth().currentUser;
       if (!user) return false;
 
-      const tokenResult = await user.getIdTokenResult();
-      return tokenResult.claims.admin === true;
+      // Verificar en Firestore el campo role
+      const userDoc = await db.collection('users').doc(user.uid).get();
+
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        return userData.role === 'admin';
+      }
+
+      return false;
     } catch (error) {
       console.error('Error al verificar rol de admin:', error);
       return false;
@@ -219,10 +236,18 @@ const AuthModule = {
    * Mostrar modal de login
    */
   showLoginModal() {
+    // Verificar que Firebase esté configurado
+    if (!window.firebase || !window.firebase.auth) {
+      console.warn('Firebase no está configurado. Configure Firebase en js/config/firebase-config.js');
+      return;
+    }
+
     const modal = document.getElementById('authModal');
     if (modal) {
       modal.classList.remove('hidden');
       this.switchToLogin();
+      // Asegurar que el modal sea visible
+      document.body.style.overflow = 'hidden';
     }
   },
 
@@ -234,6 +259,8 @@ const AuthModule = {
     if (modal) {
       modal.classList.add('hidden');
       this.clearAuthForm();
+      // Restaurar scroll del body
+      document.body.style.overflow = '';
     }
   },
 

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Auto a Firestore</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #1976D2;
+        }
+        .car-data {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Agregar Auto a Firestore</h1>
+
+        <div class="info">
+            <h3>Datos del auto a agregar:</h3>
+            <div class="car-data">{
+  "brand": "Toyota",
+  "model": "Corolla",
+  "year": 2023,
+  "price": 25000,
+  "transmission": "Automática",
+  "fuel": "Gasolina",
+  "mileage": 15000,
+  "image": "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800"
+}</div>
+        </div>
+
+        <button id="addCarBtn" onclick="addCar()">Agregar Auto a Firestore</button>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuQXi0LS6TJ1UN2-sprZWbYliX72grg-Y",
+            authDomain: "frandoweb-4c2c7.firebaseapp.com",
+            projectId: "frandoweb-4c2c7",
+            storageBucket: "frandoweb-4c2c7.firebasestorage.app",
+            messagingSenderId: "227831202965",
+            appId: "1:227831202965:web:21256f915db24a08f7c79c",
+            measurementId: "G-5B39X54TYY"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Función para mostrar estado
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + (isError ? 'error' : 'success');
+            statusDiv.style.display = 'block';
+        }
+
+        // Función para agregar el auto
+        async function addCar() {
+            const btn = document.getElementById('addCarBtn');
+            btn.disabled = true;
+            btn.textContent = 'Agregando...';
+
+            try {
+                // Verificar autenticación
+                const user = auth.currentUser;
+                if (!user) {
+                    showStatus('Error: No estás autenticado. Por favor, inicia sesión primero en la página principal.', true);
+                    btn.disabled = false;
+                    btn.textContent = 'Agregar Auto a Firestore';
+                    return;
+                }
+
+                console.log('Usuario autenticado:', user.email);
+
+                // Datos del auto
+                const carData = {
+                    brand: "Toyota",
+                    model: "Corolla",
+                    year: 2023,
+                    price: 25000,
+                    transmission: "Automática",
+                    fuel: "Gasolina",
+                    mileage: 15000,
+                    image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                console.log('Agregando auto:', carData);
+
+                // Agregar a Firestore
+                const docRef = await db.collection('cars').add(carData);
+
+                console.log('Auto agregado con ID:', docRef.id);
+                showStatus(`✅ Auto agregado exitosamente con ID: ${docRef.id}`);
+
+                btn.textContent = '✅ Auto Agregado';
+
+            } catch (error) {
+                console.error('Error al agregar auto:', error);
+                showStatus('❌ Error: ' + error.message, true);
+                btn.disabled = false;
+                btn.textContent = 'Reintentar';
+            }
+        }
+
+        // Verificar estado de autenticación al cargar
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('Usuario autenticado:', user.email);
+                showStatus('👤 Usuario autenticado: ' + user.email);
+            } else {
+                console.log('No hay usuario autenticado');
+                showStatus('⚠️ No estás autenticado. Inicia sesión en la página principal primero.', true);
+            }
+        });
+    </script>
+</body>
+</html>

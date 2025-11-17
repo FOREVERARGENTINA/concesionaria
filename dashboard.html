@@ -235,6 +235,13 @@
   <script>
     // Protect dashboard - only allow authenticated admin users
     document.addEventListener('DOMContentLoaded', async () => {
+      // Forzar cierre del modal al cargar
+      const deleteModal = document.getElementById('deleteModal');
+      if (deleteModal) {
+        deleteModal.classList.add('hidden');
+        deleteModal.style.display = 'none';
+      }
+
       // Wait for auth to initialize
       if (typeof AuthModule !== 'undefined') {
         // Wait a bit for auth state to be determined

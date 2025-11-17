@@ -15,6 +15,12 @@ const DashboardModule = {
       return;
     }
 
+    // Asegurarse de que el modal esté oculto al inicio
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+      deleteModal.classList.add('hidden');
+    }
+
     this.setupEventListeners();
     this.loadCars();
   },
@@ -364,11 +370,13 @@ const DashboardModule = {
     const modal = document.getElementById('deleteModal');
     if (modal) {
       modal.classList.remove('hidden');
+      modal.style.display = '';
       // Enfocar el botón de cancelar para accesibilidad
       setTimeout(() => {
         document.getElementById('btnCancelDelete')?.focus();
       }, 100);
     }
+    console.log('Modal abierto para eliminar:', id);
   },
 
   /**
@@ -379,7 +387,11 @@ const DashboardModule = {
     const modal = document.getElementById('deleteModal');
     if (modal) {
       modal.classList.add('hidden');
+      modal.style.display = 'none';
+      // Restaurar scroll del body
+      document.body.style.overflow = '';
     }
+    console.log('Modal cerrado');
   },
 
   /**
