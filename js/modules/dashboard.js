@@ -71,6 +71,40 @@ const DashboardModule = {
         }
       });
     }
+
+    // Listeners para modal de detalles
+    this.setupVehicleModalListeners();
+  },
+
+  /**
+   * Configura los event listeners del modal de detalles
+   */
+  setupVehicleModalListeners() {
+    const modal = document.getElementById('vehicleModal');
+    const closeBtn = document.getElementById('closeVehicleModal');
+
+    // Cerrar modal con el botón X
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        this.closeVehicleModal();
+      });
+    }
+
+    // Cerrar modal al hacer click fuera del contenido
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this.closeVehicleModal();
+        }
+      });
+    }
+
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.closeVehicleModal();
+      }
+    });
   },
 
   /**
@@ -297,6 +331,9 @@ const DashboardModule = {
           <div class="dashboard-car-price">${formattedPrice}</div>
         </div>
         <div class="dashboard-car-actions">
+          <button class="btn btn-sm btn-primary" data-action="view" data-id="${car.id}" aria-label="Ver detalles de ${car.brand} ${car.model}">
+            Ver Detalles
+          </button>
           <button class="btn btn-sm btn-secondary" data-action="edit" data-id="${car.id}" aria-label="Editar ${car.brand} ${car.model}">
             Editar
           </button>
@@ -312,8 +349,16 @@ const DashboardModule = {
    * Adjunta event listeners a los botones de acción
    */
   attachCarActions() {
+    const viewButtons = document.querySelectorAll('[data-action="view"]');
     const editButtons = document.querySelectorAll('[data-action="edit"]');
     const deleteButtons = document.querySelectorAll('[data-action="delete"]');
+
+    viewButtons.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        await this.showVehicleDetails(id);
+      });
+    });
 
     editButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -458,6 +503,123 @@ const DashboardModule = {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  },
+
+  /**
+   * Muestra los detalles de un vehículo
+   */
+  async showVehicleDetails(id) {
+    try {
+      const car = await CarStorage.getById(id);
+      if (!car) {
+        this.showAlert('Vehículo no encontrado', 'error');
+        return;
+      }
+      this.showVehicleModal(car);
+    } catch (error) {
+      this.showAlert('Error al cargar los detalles del vehículo', 'error');
+    }
+  },
+
+  /**
+   * Muestra el modal con los detalles del vehículo
+   */
+  showVehicleModal(car) {
+    const modal = document.getElementById('vehicleModal');
+    const modalBody = document.getElementById('vehicleModalBody');
+
+    if (!modal || !modalBody) return;
+
+    const imageUrl = car.imageUrl || 'https://via.placeholder.com/800x600?text=Sin+Imagen';
+    const formattedPrice = this.formatPrice(car.price);
+
+    modalBody.innerHTML = `
+      <img
+        src="${imageUrl}"
+        alt="${car.brand} ${car.model} ${car.year}"
+        class="vehicle-modal-image"
+      >
+
+      <div class="vehicle-modal-header">
+        <div class="vehicle-modal-brand">${this.escapeHtml(car.brand)}</div>
+        <h3 class="vehicle-modal-model">${this.escapeHtml(car.model)}</h3>
+        <div class="vehicle-modal-year">${car.year}</div>
+      </div>
+
+      <div class="vehicle-modal-price">${formattedPrice}</div>
+
+      <div class="vehicle-modal-specs">
+        <div class="vehicle-modal-spec">
+          <span class="vehicle-modal-spec-label">Kilometraje</span>
+          <span class="vehicle-modal-spec-value">${this.formatNumber(car.mileage)} km</span>
+        </div>
+        <div class="vehicle-modal-spec">
+          <span class="vehicle-modal-spec-label">Transmisión</span>
+          <span class="vehicle-modal-spec-value">${this.escapeHtml(car.transmission)}</span>
+        </div>
+        <div class="vehicle-modal-spec">
+          <span class="vehicle-modal-spec-label">Combustible</span>
+          <span class="vehicle-modal-spec-value">${this.escapeHtml(car.fuelType)}</span>
+        </div>
+        ${car.color ? `
+          <div class="vehicle-modal-spec">
+            <span class="vehicle-modal-spec-label">Color</span>
+            <span class="vehicle-modal-spec-value">${this.escapeHtml(car.color)}</span>
+          </div>
+        ` : ''}
+      </div>
+
+      ${car.description ? `
+        <div class="vehicle-modal-description">
+          <h4 class="vehicle-modal-description-title">Descripción</h4>
+          <p class="vehicle-modal-description-text">${this.escapeHtml(car.description)}</p>
+        </div>
+      ` : ''}
+
+      <div class="vehicle-modal-actions">
+        <button class="btn btn-outline" onclick="DashboardModule.closeVehicleModal()">
+          Cerrar
+        </button>
+        <button class="btn btn-secondary" onclick="DashboardModule.editCarFromModal('${car.id}')">
+          Editar
+        </button>
+        <button class="btn btn-danger" onclick="DashboardModule.deleteCarFromModal('${car.id}')">
+          Eliminar
+        </button>
+      </div>
+    `;
+
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+  },
+
+  /**
+   * Cierra el modal de vehículo
+   */
+  closeVehicleModal() {
+    const modal = document.getElementById('vehicleModal');
+    if (modal) {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = ''; // Restaurar scroll
+    }
+  },
+
+  /**
+   * Edita un vehículo desde el modal
+   */
+  editCarFromModal(id) {
+    this.closeVehicleModal();
+    this.editCar(id);
+  },
+
+  /**
+   * Elimina un vehículo desde el modal
+   */
+  deleteCarFromModal(id) {
+    this.closeVehicleModal();
+    this.showDeleteModal(id);
   }
 };
 
