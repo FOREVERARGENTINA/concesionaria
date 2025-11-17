@@ -1,0 +1,381 @@
+/* ========================================
+   SKELETON LOADERS - Loading Placeholders
+   ======================================== */
+
+/* Base skeleton element */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 0%,
+    var(--color-gray-100) 50%,
+    var(--color-gray-200) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--border-radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer animation already defined in animations.css */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ========================================
+   SKELETON VARIANTS
+   ======================================== */
+
+/* Text skeleton */
+.skeleton-text {
+  height: 1em;
+  margin-bottom: 0.5em;
+  border-radius: var(--border-radius-sm);
+}
+
+.skeleton-text-sm {
+  height: 0.75em;
+}
+
+.skeleton-text-lg {
+  height: 1.25em;
+}
+
+.skeleton-text-xl {
+  height: 1.5em;
+}
+
+/* Heading skeleton */
+.skeleton-heading {
+  height: 2em;
+  margin-bottom: 0.75em;
+  border-radius: var(--border-radius-md);
+}
+
+/* Image/Avatar skeleton */
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  border-radius: var(--border-radius-md);
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius-full);
+}
+
+.skeleton-avatar-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.skeleton-avatar-lg {
+  width: 64px;
+  height: 64px;
+}
+
+/* Button skeleton */
+.skeleton-button {
+  height: 44px;
+  border-radius: var(--border-radius-md);
+  width: 120px;
+}
+
+.skeleton-button-block {
+  width: 100%;
+}
+
+/* Badge/Pill skeleton */
+.skeleton-badge {
+  height: 24px;
+  width: 80px;
+  border-radius: var(--border-radius-full);
+  display: inline-block;
+}
+
+/* ========================================
+   SKELETON CAR CARD (Catalog Specific)
+   ======================================== */
+
+.skeleton-car-card {
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card image skeleton */
+.skeleton-car-card .skeleton-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+/* Card body skeleton */
+.skeleton-car-card-body {
+  padding: var(--space-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Brand skeleton (small text) */
+.skeleton-car-brand {
+  width: 40%;
+  height: 0.875em;
+}
+
+/* Model skeleton (large heading) */
+.skeleton-car-model {
+  width: 80%;
+  height: 1.5em;
+}
+
+/* Year skeleton */
+.skeleton-car-year {
+  width: 30%;
+  height: 0.875em;
+}
+
+/* Features skeleton */
+.skeleton-car-features {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-sm);
+}
+
+.skeleton-car-feature {
+  width: 80px;
+  height: 28px;
+  border-radius: var(--border-radius-md);
+}
+
+/* Price skeleton */
+.skeleton-car-price {
+  width: 50%;
+  height: 2em;
+  margin-top: auto;
+  margin-bottom: var(--space-md);
+}
+
+/* Actions skeleton */
+.skeleton-car-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.skeleton-car-actions .skeleton-button {
+  flex: 1;
+}
+
+/* ========================================
+   SKELETON DASHBOARD CARD
+   ======================================== */
+
+.skeleton-dashboard-card {
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.skeleton-dashboard-row {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.skeleton-dashboard-row:last-child {
+  border-bottom: none;
+}
+
+.skeleton-dashboard-thumbnail {
+  width: 80px;
+  height: 60px;
+  border-radius: var(--border-radius-md);
+  flex-shrink: 0;
+}
+
+.skeleton-dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* ========================================
+   SKELETON FORM
+   ======================================== */
+
+.skeleton-form-group {
+  margin-bottom: var(--space-lg);
+}
+
+.skeleton-label {
+  width: 30%;
+  height: 1em;
+  margin-bottom: var(--space-xs);
+}
+
+.skeleton-input {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--border-radius-md);
+}
+
+.skeleton-textarea {
+  width: 100%;
+  height: 120px;
+  border-radius: var(--border-radius-md);
+}
+
+/* ========================================
+   SKELETON GRID LAYOUTS
+   ======================================== */
+
+/* Catalog grid skeleton */
+.skeleton-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+/* Stagger animation for skeleton cards */
+.skeleton-catalog-grid .skeleton-car-card:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.skeleton-catalog-grid .skeleton-car-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.skeleton-catalog-grid .skeleton-car-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.skeleton-catalog-grid .skeleton-car-card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.skeleton-catalog-grid .skeleton-car-card:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+.skeleton-catalog-grid .skeleton-car-card:nth-child(6) {
+  animation-delay: 0.5s;
+}
+
+/* ========================================
+   SKELETON UTILITIES
+   ======================================== */
+
+/* Width variations */
+.skeleton-w-25 { width: 25%; }
+.skeleton-w-50 { width: 50%; }
+.skeleton-w-75 { width: 75%; }
+.skeleton-w-full { width: 100%; }
+
+/* Height variations */
+.skeleton-h-sm { height: 20px; }
+.skeleton-h-md { height: 40px; }
+.skeleton-h-lg { height: 60px; }
+.skeleton-h-xl { height: 80px; }
+
+/* Circle skeleton */
+.skeleton-circle {
+  border-radius: var(--border-radius-full);
+}
+
+/* Square skeleton */
+.skeleton-square {
+  border-radius: 0;
+}
+
+/* ========================================
+   PERFORMANCE & ACCESSIBILITY
+   ======================================== */
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--color-gray-200);
+  }
+}
+
+/* Screen reader accessibility */
+.skeleton::after {
+  content: 'Cargando...';
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Loading container */
+.skeleton-container {
+  position: relative;
+}
+
+.skeleton-container[aria-busy="true"] {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Fade in when content loads */
+.skeleton-loaded {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* ========================================
+   EXAMPLE USAGE IN HTML
+   ======================================== */
+
+/*
+  <!-- Single text skeleton -->
+  <div class="skeleton skeleton-text"></div>
+  <div class="skeleton skeleton-text skeleton-w-75"></div>
+
+  <!-- Car card skeleton -->
+  <div class="skeleton-car-card">
+    <div class="skeleton skeleton-image"></div>
+    <div class="skeleton-car-card-body">
+      <div class="skeleton skeleton-car-brand"></div>
+      <div class="skeleton skeleton-car-model"></div>
+      <div class="skeleton skeleton-car-year"></div>
+      <div class="skeleton-car-features">
+        <div class="skeleton skeleton-car-feature"></div>
+        <div class="skeleton skeleton-car-feature"></div>
+        <div class="skeleton skeleton-car-feature"></div>
+      </div>
+      <div class="skeleton skeleton-car-price"></div>
+      <div class="skeleton-car-actions">
+        <div class="skeleton skeleton-button"></div>
+        <div class="skeleton skeleton-button"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catalog grid with skeletons -->
+  <div class="skeleton-catalog-grid">
+    <div class="skeleton-car-card">...</div>
+    <div class="skeleton-car-card">...</div>
+    <div class="skeleton-car-card">...</div>
+  </div>
+*/
