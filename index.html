@@ -320,6 +320,16 @@
         });
       }
 
+      // Cerrar modal con tecla ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const modal = document.getElementById('authModal');
+          if (modal && !modal.classList.contains('hidden')) {
+            AuthModule.hideLoginModal();
+          }
+        }
+      });
+
       // Cambiar entre formularios
       document.getElementById('showRegister')?.addEventListener('click', () => {
         AuthModule.switchToRegister();

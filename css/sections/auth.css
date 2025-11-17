@@ -18,6 +18,11 @@
   animation: fadeIn var(--transition-base);
 }
 
+/* Asegurar que hidden funcione correctamente */
+.auth-modal.hidden {
+  display: none !important;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
