@@ -271,6 +271,11 @@
   padding: var(--space-md);
 }
 
+/* Asegurar que hidden funcione correctamente */
+.modal-backdrop.hidden {
+  display: none !important;
+}
+
 .modal-content {
   background-color: var(--color-white);
   border-radius: var(--border-radius-lg);
