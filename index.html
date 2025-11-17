@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="css/sections/navigation.css">
   <link rel="stylesheet" href="css/sections/hero.css">
   <link rel="stylesheet" href="css/sections/catalog.css">
+  <link rel="stylesheet" href="css/sections/auth.css">
   <link rel="stylesheet" href="css/sections/footer.css">
 </head>
 <body>
@@ -42,6 +43,17 @@
         <li><a href="#main-content" class="nav-link active">Inicio</a></li>
         <li><a href="#catalogo" class="nav-link">Catálogo</a></li>
         <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+
+        <!-- Sección de usuario autenticado (oculto por defecto) -->
+        <li id="userSection" class="user-section hidden">
+          <span id="userEmail" class="user-email"></span>
+          <button id="logoutButton" class="btn btn-sm btn-secondary">Salir</button>
+        </li>
+
+        <!-- Botón de login (visible por defecto) -->
+        <li id="loginButton">
+          <button class="btn btn-sm btn-primary">Iniciar Sesión</button>
+        </li>
       </ul>
 
       <button class="nav-toggle" id="navToggle" aria-label="Abrir menú de navegación" aria-expanded="false">
@@ -150,14 +162,252 @@
     </div>
   </footer>
 
+  <!-- Modal de Autenticación -->
+  <div id="authModal" class="auth-modal hidden" role="dialog" aria-labelledby="authModalTitle" aria-modal="true">
+    <div class="auth-container">
+      <div class="auth-header">
+        <button class="auth-close" id="authModalClose" aria-label="Cerrar modal">&times;</button>
+        <h2 id="authModalTitle" class="auth-title">Bienvenido a AutoPremium</h2>
+        <p class="auth-subtitle">Inicia sesión para acceder a todas las funciones</p>
+      </div>
+
+      <div class="auth-body">
+        <!-- Formulario de Login -->
+        <form id="loginForm" class="auth-form">
+          <div class="auth-social">
+            <button type="button" id="googleLoginBtn" class="btn-google">
+              <svg width="18" height="18" viewBox="0 0 18 18">
+                <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
+                <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+              </svg>
+              Continuar con Google
+            </button>
+          </div>
+
+          <div class="auth-divider">O continúa con email</div>
+
+          <div class="form-group">
+            <label for="loginEmail" class="form-label">Email</label>
+            <input type="email" id="loginEmail" class="form-input" required aria-required="true">
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword" class="form-label">Contraseña</label>
+            <input type="password" id="loginPassword" class="form-input" required aria-required="true">
+          </div>
+
+          <span class="auth-error" id="loginFormError"></span>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Iniciar Sesión</button>
+
+          <div style="text-align: center; margin-top: var(--space-md);">
+            <a class="auth-link" id="showForgotPassword">¿Olvidaste tu contraseña?</a>
+          </div>
+        </form>
+
+        <!-- Formulario de Registro -->
+        <form id="registerForm" class="auth-form hidden">
+          <div class="auth-social">
+            <button type="button" id="googleRegisterBtn" class="btn-google">
+              <svg width="18" height="18" viewBox="0 0 18 18">
+                <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/>
+                <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+              </svg>
+              Registrarse con Google
+            </button>
+          </div>
+
+          <div class="auth-divider">O regístrate con email</div>
+
+          <div class="form-group">
+            <label for="registerName" class="form-label">Nombre completo</label>
+            <input type="text" id="registerName" class="form-input" required aria-required="true">
+          </div>
+
+          <div class="form-group">
+            <label for="registerEmail" class="form-label">Email</label>
+            <input type="email" id="registerEmail" class="form-input" required aria-required="true">
+          </div>
+
+          <div class="form-group">
+            <label for="registerPassword" class="form-label">Contraseña (mínimo 6 caracteres)</label>
+            <input type="password" id="registerPassword" class="form-input" required aria-required="true" minlength="6">
+          </div>
+
+          <span class="auth-error" id="registerFormError"></span>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Crear Cuenta</button>
+        </form>
+
+        <!-- Formulario de Recuperación de Contraseña -->
+        <form id="forgotPasswordForm" class="auth-form hidden">
+          <p style="color: var(--color-gray-600); margin-bottom: var(--space-lg);">
+            Ingresa tu email y te enviaremos instrucciones para recuperar tu contraseña.
+          </p>
+
+          <div class="form-group">
+            <label for="resetEmail" class="form-label">Email</label>
+            <input type="email" id="resetEmail" class="form-input" required aria-required="true">
+          </div>
+
+          <span class="auth-error" id="forgotPasswordFormError"></span>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Enviar Instrucciones</button>
+
+          <div style="text-align: center; margin-top: var(--space-md);">
+            <a class="auth-link" id="backToLogin">Volver a iniciar sesión</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="auth-footer">
+        <span id="authFooterText">
+          ¿No tienes cuenta? <a class="auth-link" id="showRegister">Regístrate</a>
+        </span>
+        <span id="authFooterTextAlt" class="hidden">
+          ¿Ya tienes cuenta? <a class="auth-link" id="showLogin">Inicia sesión</a>
+        </span>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase SDKs (versión 9 compatible) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
   <!-- JavaScript al final con defer -->
   <script src="js/config/firebase-config.js"></script>
   <script src="js/modules/storage.js" defer></script>
+  <script src="js/modules/auth.js" defer></script>
   <script src="js/modules/catalog.js" defer></script>
   <script src="js/main.js" defer></script>
+
+  <!-- Event Listeners para modal de autenticación -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Botones para abrir modal
+      const loginButton = document.querySelector('#loginButton button');
+      if (loginButton) {
+        loginButton.addEventListener('click', () => AuthModule.showLoginModal());
+      }
+
+      // Botón cerrar modal
+      const closeModal = document.getElementById('authModalClose');
+      if (closeModal) {
+        closeModal.addEventListener('click', () => AuthModule.hideLoginModal());
+      }
+
+      // Cerrar modal al hacer click fuera
+      const modal = document.getElementById('authModal');
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            AuthModule.hideLoginModal();
+          }
+        });
+      }
+
+      // Cambiar entre formularios
+      document.getElementById('showRegister')?.addEventListener('click', () => {
+        AuthModule.switchToRegister();
+        document.getElementById('authModalTitle').textContent = 'Crear Cuenta';
+        document.getElementById('authFooterText').classList.add('hidden');
+        document.getElementById('authFooterTextAlt').classList.remove('hidden');
+      });
+
+      document.getElementById('showLogin')?.addEventListener('click', () => {
+        AuthModule.switchToLogin();
+        document.getElementById('authModalTitle').textContent = 'Bienvenido a AutoPremium';
+        document.getElementById('authFooterText').classList.remove('hidden');
+        document.getElementById('authFooterTextAlt').classList.add('hidden');
+      });
+
+      document.getElementById('showForgotPassword')?.addEventListener('click', () => {
+        AuthModule.switchToForgotPassword();
+        document.getElementById('authModalTitle').textContent = 'Recuperar Contraseña';
+      });
+
+      document.getElementById('backToLogin')?.addEventListener('click', () => {
+        AuthModule.switchToLogin();
+        document.getElementById('authModalTitle').textContent = 'Bienvenido a AutoPremium';
+      });
+
+      // Submit login
+      document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const result = await AuthModule.loginWithEmail(email, password);
+        if (result.success) {
+          AuthModule.hideLoginModal();
+        } else {
+          AuthModule.showFormError('loginForm', result.error);
+        }
+      });
+
+      // Submit register
+      document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        const result = await AuthModule.registerWithEmail(email, password, name);
+        if (result.success) {
+          AuthModule.hideLoginModal();
+          AuthModule.showSuccess('Cuenta creada exitosamente!');
+        } else {
+          AuthModule.showFormError('registerForm', result.error);
+        }
+      });
+
+      // Submit forgot password
+      document.getElementById('forgotPasswordForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('resetEmail').value;
+
+        const result = await AuthModule.resetPassword(email);
+        if (result.success) {
+          AuthModule.showSuccess('Email de recuperación enviado! Revisa tu bandeja de entrada.');
+          AuthModule.switchToLogin();
+        } else {
+          AuthModule.showFormError('forgotPasswordForm', result.error);
+        }
+      });
+
+      // Google login/register
+      document.getElementById('googleLoginBtn')?.addEventListener('click', async () => {
+        const result = await AuthModule.loginWithGoogle();
+        if (result.success) {
+          AuthModule.hideLoginModal();
+        } else {
+          AuthModule.showFormError('loginForm', result.error);
+        }
+      });
+
+      document.getElementById('googleRegisterBtn')?.addEventListener('click', async () => {
+        const result = await AuthModule.loginWithGoogle();
+        if (result.success) {
+          AuthModule.hideLoginModal();
+        } else {
+          AuthModule.showFormError('registerForm', result.error);
+        }
+      });
+
+      // Logout
+      document.getElementById('logoutButton')?.addEventListener('click', async () => {
+        const result = await AuthModule.logout();
+        if (result.success) {
+          window.location.reload();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
